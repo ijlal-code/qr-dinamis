@@ -31,9 +31,9 @@ class AuthController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        Auth::login($user);
-
-        return redirect()->route('home');
+        return redirect()
+            ->route('login')
+            ->with('status', 'Akun berhasil dibuat. Silakan login untuk mulai membuat QR.');
     }
 
     public function showLogin(): View
@@ -59,7 +59,7 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('home'));
+        return redirect()->intended(route('dashboard'));
     }
 
     public function logout(Request $request): RedirectResponse

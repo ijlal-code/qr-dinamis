@@ -10,18 +10,13 @@ class HomeController extends Controller
 {
     public function __invoke(): View
     {
-        $recentLinks = collect();
+        $links = QrLink::query()
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get();
 
-        if (Auth::check()) {
-            $recentLinks = QrLink::query()
-                ->where('user_id', Auth::id())
-                ->latest()
-                ->take(6)
-                ->get();
-        }
-
-        return view('welcome', [
-            'recentLinks' => $recentLinks,
+        return view('dashboard', [
+            'links' => $links,
         ]);
     }
 }

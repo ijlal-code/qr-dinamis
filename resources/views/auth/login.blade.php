@@ -28,6 +28,9 @@
         <div class="card">
             <h1>Masuk</h1>
             <p>Login untuk mulai membuat dan mengelola QR dinamis.</p>
+            @if (session('status'))
+                <div style="padding:12px 14px; border:1px solid #bae6fd; background:#ecfeff; color:#0ea5e9; border-radius:12px; margin-bottom:10px;">{{ session('status') }}</div>
+            @endif
             <form method="POST" action="{{ route('login') }}">
                 @csrf
                 <div>
