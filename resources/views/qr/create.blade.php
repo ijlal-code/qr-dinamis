@@ -51,10 +51,20 @@
                         <div style="margin-top:6px;" class="badge">Slug: {{ $link->slug }}</div>
                     </div>
                     <div class="actions" data-qr-card data-url="{{ route('qr.redirect', $link->slug) }}">
-                        <a class="btn ghost" href="{{ route('qr.redirect', $link->slug) }}" target="_blank" rel="noopener">Lihat QR</a>
-                        <button class="btn primary" type="button" data-copy>Salin link</button>
-                        <button class="btn ghost" type="button" data-download>Unduh QR</button>
-                        <div class="qr-box" style="display:none;"></div>
+                        <button class="btn ghost" type="button" data-toggle>Lihat QR</button>
+                        <div class="qr-preview card" data-preview style="display:none; margin-top:12px; width:100%; gap:14px;">
+                            <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+                                <div class="qr-box" style="width:220px; height:220px; display:none;"></div>
+                                <div style="flex:1; min-width:240px; display:grid; gap:10px;">
+                                    <div style="font-weight:700;">Pratinjau QR</div>
+                                    <div class="muted" style="word-break:break-all;">{{ route('qr.redirect', $link->slug) }}</div>
+                                    <div class="actions">
+                                        <button class="btn primary" type="button" data-copy>Salin link</button>
+                                        <button class="btn ghost" type="button" data-download>Unduh QR PNG</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             @endforeach
@@ -68,13 +78,26 @@
 <script>
     document.querySelectorAll('[data-qr-card]').forEach((card) => {
         const url = card.getAttribute('data-url');
+        const toggleBtn = card.querySelector('[data-toggle]');
         const copyBtn = card.querySelector('[data-copy]');
         const downloadBtn = card.querySelector('[data-download]');
+        const preview = card.querySelector('[data-preview]');
         const qrBox = card.querySelector('.qr-box');
 
-        if (!url || !qrBox) return;
+        if (!url || !qrBox || !preview || !toggleBtn) return;
 
-        new QRCode(qrBox, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.H });
+        let isRendered = false;
+
+        toggleBtn?.addEventListener('click', () => {
+            const isHidden = preview.style.display === 'none';
+            preview.style.display = isHidden ? 'block' : 'none';
+
+            if (isHidden && !isRendered) {
+                new QRCode(qrBox, { text: url, width: 220, height: 220, correctLevel: QRCode.CorrectLevel.H });
+                qrBox.style.display = 'block';
+                isRendered = true;
+            }
+        });
 
         copyBtn?.addEventListener('click', async () => {
             try {
