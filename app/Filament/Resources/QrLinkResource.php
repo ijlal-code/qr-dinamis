@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Hidden;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 
@@ -25,6 +26,9 @@ class QrLinkResource extends Resource
     {
         return $form
             ->schema([
+                Hidden::make('user_id')
+                    ->default(fn () => auth()->id()),
+
                 // Input Nama Link
                 TextInput::make('name')
                     ->required()
